@@ -304,6 +304,9 @@ st.markdown("""
         text-decoration: none !important;
         text-align: center;
         display: inline-block;
+        background-color: #FEFDF8 !important;
+        border: 1.5px solid var(--border) !important;
+        color: var(--sage) !important;
     }
 
     .stDownloadButton>button:hover, .stLinkButton>a:hover {
@@ -321,6 +324,32 @@ st.markdown("""
     div[data-testid="stTextInput"] button svg,
     div[data-testid="stTextInputRootElement"] button svg {
         fill: var(--ink) !important;
+    }
+
+    /* Host Login expander — force light styling on the header bar and body */
+    div[data-testid="stExpander"] {
+        border: 1.5px solid var(--border) !important;
+        border-radius: 12px !important;
+        background-color: var(--card) !important;
+    }
+
+    div[data-testid="stExpander"] summary,
+    div[data-testid="stExpander"] details {
+        background-color: var(--card) !important;
+        color: var(--ink) !important;
+    }
+
+    div[data-testid="stExpander"] summary p,
+    div[data-testid="stExpander"] summary span {
+        color: var(--ink) !important;
+    }
+
+    div[data-testid="stExpander"] summary svg {
+        fill: var(--terracotta) !important;
+    }
+
+    div[data-testid="stExpander"] div[data-testid="stExpanderDetails"] {
+        background-color: var(--card) !important;
     }
 
     .footer-note {
