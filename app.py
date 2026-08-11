@@ -17,26 +17,27 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- BLUSH & IVORY STYLING (large text, high contrast, responsive) ---
+# --- SAGE & TERRACOTTA STYLING (large text, high contrast, responsive) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Work+Sans:wght@300;400;500;600&display=swap');
 
     :root {
-        --ivory: #FBF7F4;
-        --ink: #2B2020;
-        --blush: #EFD9D9;
-        --rose: #B76E79;
-        --rose-deep: #8A4650;
-        --gold: #C9A66B;
-        --sage: #8FA379;
-        --card-shadow: rgba(183, 110, 121, 0.14);
+        --ivory: #F2EEE0;
+        --card: #FBF8EE;
+        --ink: #423B2E;
+        --border: #DED2B8;
+        --terracotta: #B9622F;
+        --terracotta-deep: #93491F;
+        --sage: #7C8B6F;
+        --sage-light: #9CAF88;
+        --card-shadow: rgba(140, 110, 70, 0.14);
     }
 
     html, body, .stApp {
         background-color: var(--ivory);
         color: var(--ink);
-        font-family: 'Jost', sans-serif;
+        font-family: 'Work Sans', sans-serif;
         font-size: 18px;
     }
 
@@ -49,7 +50,7 @@ st.markdown("""
     }
 
     h1, h2, h3 {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: 'Fraunces', serif;
         color: var(--ink);
     }
 
@@ -57,15 +58,16 @@ st.markdown("""
         text-align: center;
         letter-spacing: 0.15em;
         font-size: clamp(0.85rem, 2vw, 1rem);
-        color: var(--rose-deep);
+        color: var(--terracotta);
         font-weight: 500;
         margin-bottom: 0.5rem;
     }
 
     .hero-names {
         text-align: center;
-        font-family: 'Cormorant Garamond', serif;
+        font-family: 'Fraunces', serif;
         font-weight: 600;
+        font-style: italic;
         font-size: clamp(2.4rem, 8vw, 3.4rem);
         line-height: 1.15;
         color: var(--ink);
@@ -73,24 +75,22 @@ st.markdown("""
     }
 
     .hero-names em {
-        color: var(--rose-deep);
+        color: var(--terracotta);
         font-style: italic;
     }
 
     .hero-date {
         text-align: center;
-        font-family: 'Cormorant Garamond', serif;
-        font-weight: 600;
-        font-style: italic;
-        font-size: clamp(1.3rem, 3.5vw, 1.6rem);
-        color: var(--rose-deep);
+        color: var(--sage);
+        font-weight: 500;
+        font-size: clamp(1.2rem, 3.5vw, 1.4rem);
         margin-top: 0.4rem;
     }
 
     .hero-venue {
         text-align: center;
         font-size: clamp(0.9rem, 2.2vw, 1rem);
-        color: #6E5C5C;
+        color: #8A7F6A;
         margin-top: 0.3rem;
     }
 
@@ -102,56 +102,58 @@ st.markdown("""
 
     .section-label {
         font-size: clamp(1.3rem, 3.5vw, 1.6rem);
-        font-family: 'Cormorant Garamond', serif;
+        font-family: 'Fraunces', serif;
+        font-style: italic;
         font-weight: 600;
-        color: var(--rose-deep);
+        color: var(--terracotta);
         text-align: center;
         margin-bottom: 0.4rem;
     }
 
     .section-sub {
         text-align: center;
-        color: #5A4A4A;
+        color: #6E6252;
         font-size: clamp(1rem, 2.5vw, 1.1rem);
         margin-bottom: 1.8rem;
         line-height: 1.5;
     }
 
     div[data-testid="stForm"] {
-        background-color: #FFFFFF;
+        background-color: var(--card);
         padding: clamp(1.4rem, 5vw, 2.6rem);
-        border-radius: 10px;
+        border-radius: 18px;
         box-shadow: 0 12px 32px var(--card-shadow);
-        border: 1px solid var(--blush);
+        border: none;
     }
 
     .stTextInput input, .stTextArea textarea {
         border-radius: 6px !important;
-        border: 1.5px solid #D9C2C2 !important;
-        background-color: #FEFCFB !important;
-        font-family: 'Jost', sans-serif !important;
+        border: 1.5px solid var(--border) !important;
+        background-color: #FEFDF8 !important;
+        font-family: 'Work Sans', sans-serif !important;
         font-size: 1.1rem !important;
         padding: 0.7rem 0.8rem !important;
         color: var(--ink) !important;
     }
 
     .stTextInput input:focus, .stTextArea textarea:focus {
-        border-color: var(--rose) !important;
-        box-shadow: 0 0 0 2px var(--blush) !important;
+        border-color: var(--terracotta) !important;
+        box-shadow: 0 0 0 2px #EFE1CC !important;
     }
 
     label p, .stRadio label p {
-        font-family: 'Jost', sans-serif !important;
+        font-family: 'Work Sans', sans-serif !important;
         font-size: 1rem !important;
         font-weight: 500;
         color: var(--ink) !important;
     }
 
     .guest-tag {
-        font-family: 'Cormorant Garamond', serif;
+        font-family: 'Fraunces', serif;
+        font-style: italic;
         font-weight: 600;
         font-size: 1.4rem;
-        color: var(--rose-deep);
+        color: var(--sage);
         margin-bottom: 0.5rem;
         margin-top: 0.8rem;
     }
@@ -161,10 +163,10 @@ st.markdown("""
     }
 
     div[role="radiogroup"] label {
-        border: 1.5px solid #D9C2C2;
+        border: 1.5px solid var(--border);
         border-radius: 8px;
         padding: 0.7rem 1rem !important;
-        background-color: #FEFCFB;
+        background-color: #FEFDF8;
     }
 
     div[role="radiogroup"] label p {
@@ -173,31 +175,45 @@ st.markdown("""
 
     .stButton>button, .stFormSubmitButton>button {
         border-radius: 30px !important;
-        font-family: 'Jost', sans-serif !important;
+        font-family: 'Work Sans', sans-serif !important;
         font-weight: 600 !important;
         font-size: 1.15rem !important;
         padding: 0.85rem 1.5rem !important;
-        border: 1.5px solid var(--rose) !important;
+        border: 1.5px solid var(--border) !important;
+        color: var(--sage) !important;
         width: 100%;
         transition: all 0.2s ease;
     }
 
     .stFormSubmitButton>button {
-        background-color: var(--rose) !important;
-        color: #FFFFFF !important;
+        background-color: var(--terracotta) !important;
+        border: 1.5px solid var(--terracotta) !important;
+        color: #FBF8EE !important;
     }
 
     .stFormSubmitButton>button:hover {
-        background-color: var(--rose-deep) !important;
-        border-color: var(--rose-deep) !important;
+        background-color: var(--terracotta-deep) !important;
+        border-color: var(--terracotta-deep) !important;
+    }
+
+    /* Second RSVP button (Decline) reads as secondary/outlined */
+    div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button {
+        background-color: transparent !important;
+        border: 1.5px solid var(--border) !important;
+        color: var(--sage) !important;
+    }
+
+    div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button:hover {
+        background-color: #F3EEDD !important;
+        border-color: var(--sage) !important;
     }
 
     .footer-note {
         text-align: center;
-        font-family: 'Cormorant Garamond', serif;
+        font-family: 'Fraunces', serif;
         font-style: italic;
         font-size: 1.15rem;
-        color: #7A6868;
+        color: #A6987F;
         margin-top: 2.4rem;
     }
 
@@ -222,14 +238,13 @@ st.markdown("""
 
 SPRIG_SVG = """
 <div class="sprig-divider">
-<svg width="180" height="28" viewBox="0 0 180 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <line x1="0" y1="14" x2="70" y2="14" stroke="#C9A66B" stroke-width="1"/>
-  <line x1="110" y1="14" x2="180" y2="14" stroke="#C9A66B" stroke-width="1"/>
-  <path d="M90 14 C86 8, 78 8, 76 14 C78 20, 86 20, 90 14 Z" fill="#EFD9D9" stroke="#B76E79" stroke-width="0.8"/>
-  <path d="M90 14 C94 8, 102 8, 104 14 C102 20, 94 20, 90 14 Z" fill="#EFD9D9" stroke="#B76E79" stroke-width="0.8"/>
-  <circle cx="90" cy="14" r="2.4" fill="#C9A66B"/>
-  <path d="M76 14 C72 12, 70 14, 70 16" stroke="#8FA379" stroke-width="1" fill="none"/>
-  <path d="M104 14 C108 12, 110 14, 110 16" stroke="#8FA379" stroke-width="1" fill="none"/>
+<svg width="150" height="26" viewBox="0 0 150 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <line x1="10" y1="13" x2="140" y2="13" stroke="#DED2B8" stroke-width="1"/>
+  <circle cx="50" cy="13" r="4" fill="#9CAF88"/>
+  <circle cx="65" cy="9" r="3" fill="#DED2B8"/>
+  <circle cx="75" cy="13" r="4.5" fill="#B9622F"/>
+  <circle cx="88" cy="9" r="3" fill="#DED2B8"/>
+  <circle cx="100" cy="13" r="4" fill="#9CAF88"/>
 </svg>
 </div>
 """
