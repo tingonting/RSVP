@@ -27,6 +27,21 @@ EVENT_END = datetime(2026, 11, 7, 23, 30)    # 11:30pm carriages
 
 DATA_COLUMNS = ["Guest 1", "Additional Guests", "Party Size", "Status", "Notes", "Timestamp"]
 
+HERO_IMAGE_PATH = os.path.join(os.path.dirname(__file__), "images", "hero.jpg")
+
+
+def get_base64_image(path):
+    """Reads a local image and returns it as a base64 data URI, or None if missing."""
+    if not os.path.exists(path):
+        return None
+    import base64
+    with open(path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+    ext = os.path.splitext(path)[1].lstrip(".").lower()
+    mime = "jpeg" if ext == "jpg" else ext
+    return f"data:image/{mime};base64,{encoded}"
+
+
 SCOPES = [
     "https://www.googleapis.com/auth/spreadsheets",
     "https://www.googleapis.com/auth/drive",
