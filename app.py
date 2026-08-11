@@ -79,10 +79,22 @@ st.markdown("""
 
     #MainMenu, footer, header {visibility: hidden;}
     header {height: 0 !important; min-height: 0 !important;}
+    div[data-testid="stHeader"] {
+        height: 0 !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        visibility: hidden;
+    }
+    div[data-testid="stAppViewContainer"],
+    div[data-testid="stMain"],
+    section.stMain {
+        padding-top: 0 !important;
+    }
 
     .block-container {
         max-width: 720px;
-        padding-top: 2.5rem !important;
+        padding-top: 0 !important;
         padding-bottom: 3rem;
     }
 
