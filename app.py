@@ -5,9 +5,9 @@ from datetime import datetime
 # ============================================================
 # CONFIG — edit these lines to personalize the page
 # ============================================================
-COUPLE_NAMES = "The Happy Couple"     # e.g. "Alex & Jamie"
-WEDDING_DATE = "Your Wedding Date"    # e.g. "October 17th, 2026"
-VENUE = ""                            # e.g. "The Orchard House, Worcestershire" (leave blank to hide)
+COUPLE_NAMES = "Josie & Conor"                                   # e.g. "Alex & Jamie"
+WEDDING_DATE = "7th November 2026"                                # e.g. "October 17th, 2026"
+VENUE = "Ansty Golf Centre, Brinklow Rd, Coventry CV7 9JL"        # e.g. "The Orchard House, Worcestershire" (leave blank to hide)
 # Host password now lives in Streamlit secrets — see .streamlit/secrets.toml
 # ============================================================
 
@@ -56,11 +56,12 @@ st.markdown("""
 
     .hero-eyebrow {
         text-align: center;
-        letter-spacing: 0.15em;
-        font-size: clamp(0.85rem, 2vw, 1rem);
+        letter-spacing: 0.03em;
+        font-size: clamp(1rem, 2.4vw, 1.15rem);
         color: var(--terracotta);
         font-weight: 500;
         margin-bottom: 0.5rem;
+        line-height: 1.4;
     }
 
     .hero-names {
@@ -254,7 +255,7 @@ if 'rsvp_data' not in st.session_state:
     st.session_state['rsvp_data'] = []
 
 # --- HERO ---
-st.markdown("<div class='hero-eyebrow'>Together with our families</div>", unsafe_allow_html=True)
+st.markdown("<div class='hero-eyebrow'>You are invited to celebrate the wedding of</div>", unsafe_allow_html=True)
 if "&" in COUPLE_NAMES:
     display_names = COUPLE_NAMES.replace("&", "<em>&</em>")
 else:
