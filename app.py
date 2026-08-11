@@ -27,7 +27,7 @@ EVENT_END = datetime(2026, 11, 7, 23, 30)    # 11:30pm carriages
 
 DATA_COLUMNS = ["Guest 1", "Additional Guests", "Party Size", "Status", "Notes", "Timestamp"]
 
-HERO_IMAGE_PATH = os.path.join(os.path.dirname(__file__), "images", "hero1.jpg")
+HERO_IMAGE_PATH = os.path.join(os.path.dirname(__file__), "images", "IMG_0033.jpeg")
 
 
 def get_base64_image(path):
