@@ -420,45 +420,25 @@ st.markdown("""
         margin-top: 2.4rem;
     }
 
-    /* Top-left hero photo that fades outward in every direction from
-       the corner, toward the RSVP form. A radial fade (rather than a
-       diagonal one) avoids leaving a hard edge on the far side of the
-       photo. Anchored to the content column (not the viewport) so it
-       can't get clipped by Streamlit's own wrapper divs, sits behind
-       all content, and never intercepts taps/clicks. */
-    .corner-photo-wrap {
-        position: relative;
+    /* Full-width rounded photo banner sitting above the hero names.
+       Simple, in-flow layout — no cropping tricks, no masking, no
+       absolute positioning — so it can't misbehave across browsers
+       or clip guests out of frame. */
+    .hero-photo-banner {
         width: 100%;
-        height: 0;
-    }
-
-    .corner-photo {
-        position: absolute;
-        top: 0;
-        left: -1.5rem;
-        width: min(46vw, 480px);
-        height: min(46vw, 480px);
+        aspect-ratio: 4 / 3;
+        border-radius: 20px;
         background-size: cover;
-        background-position: top left;
-        -webkit-mask-image: radial-gradient(circle at top left, black 0%, black 35%, rgba(0,0,0,0.5) 58%, transparent 82%);
-        mask-image: radial-gradient(circle at top left, black 0%, black 35%, rgba(0,0,0,0.5) 58%, transparent 82%);
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    .block-container {
-        position: relative;
-        z-index: 1;
+        background-position: center;
+        box-shadow: 0 12px 32px var(--card-shadow);
+        margin-bottom: 1.6rem;
     }
 
     @media (max-width: 480px) {
-        .corner-photo {
-            width: 68vw;
-            height: 68vw;
-            top: 0;
-            left: -1rem;
-            -webkit-mask-image: radial-gradient(circle at top left, black 0%, black 30%, rgba(0,0,0,0.5) 50%, transparent 74%);
-            mask-image: radial-gradient(circle at top left, black 0%, black 30%, rgba(0,0,0,0.5) 50%, transparent 74%);
+        .hero-photo-banner {
+            aspect-ratio: 1 / 1;
+            border-radius: 16px;
+            margin-bottom: 1.2rem;
         }
     }
 
