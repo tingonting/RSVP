@@ -407,6 +407,46 @@ st.markdown("""
         margin-top: 2.4rem;
     }
 
+    /* Top-left hero photo that fades diagonally down into the page,
+       toward the RSVP form. Anchored to the content column (not the
+       viewport) so it can't get clipped by Streamlit's own wrapper
+       divs, sits behind all content, and never intercepts taps/clicks. */
+    .corner-photo-wrap {
+        position: relative;
+        width: 100%;
+        height: 0;
+    }
+
+    .corner-photo {
+        position: absolute;
+        top: -2.5rem;
+        left: -1.5rem;
+        width: min(46vw, 480px);
+        height: min(46vw, 480px);
+        background-size: cover;
+        background-position: top left;
+        -webkit-mask-image: linear-gradient(135deg, black 0%, black 25%, transparent 72%);
+        mask-image: linear-gradient(135deg, black 0%, black 25%, transparent 72%);
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .block-container {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (max-width: 480px) {
+        .corner-photo {
+            width: 62vw;
+            height: 62vw;
+            top: -1.5rem;
+            left: -1rem;
+            -webkit-mask-image: linear-gradient(160deg, black 0%, black 20%, transparent 60%);
+            mask-image: linear-gradient(160deg, black 0%, black 20%, transparent 60%);
+        }
+    }
+
     /* Extra breathing room on larger screens */
     @media (min-width: 900px) {
         .block-container { padding-top: 3.5rem; }
@@ -501,6 +541,14 @@ def build_ics():
         "END:VCALENDAR\r\n"
     )
 
+
+# --- CORNER PHOTO ---
+hero_photo_uri = get_base64_image(HERO_IMAGE_PATH)
+if hero_photo_uri:
+    st.markdown(
+        f"<div class='corner-photo' style=\"background-image: url('{hero_photo_uri}');\"></div>",
+        unsafe_allow_html=True
+    )
 
 # --- HERO ---
 st.markdown("<div class='hero-eyebrow'>You are invited to celebrate the wedding of</div>", unsafe_allow_html=True)
