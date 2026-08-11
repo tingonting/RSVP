@@ -196,7 +196,13 @@ st.markdown("""
     div[data-testid="stSelectbox"] * {
         color: var(--ink) !important;
         background-color: transparent !important;
-        fill: var(--ink) !important;
+    }
+
+    /* The dropdown arrow icon has an invisible hit-area shape inside it that
+       was picking up our fill color and rendering as a solid block — simplest
+       fix is to just hide the icon; the dropdown still opens fine on tap. */
+    div[data-testid="stSelectbox"] svg {
+        display: none !important;
     }
 
     /* The dropdown options list renders as a popover — force it light too */
