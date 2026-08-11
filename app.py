@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import os
 import uuid
+import gspread
+from google.oauth2.service_account import Credentials
 from datetime import datetime
 from urllib.parse import quote
 
@@ -14,6 +16,8 @@ VENUE = "Ansty Golf Centre, Brinklow Rd, Coventry CV7 9JL"          # leave blan
 TIMINGS = "4:00pm start · Last orders 11:00pm · Carriages 11:30pm"  # leave blank to hide
 DRESS_CODE = "Smart Casual"                                         # leave blank to hide
 
+GOOGLE_SHEET_NAME = "rsvp_data"   # must match the exact name of your Google Sheet
+
 # Used to build the "Add to Calendar" file — keep in sync with WEDDING_DATE/TIMINGS above
 EVENT_START = datetime(2026, 11, 7, 16, 0)   # 4:00pm
 EVENT_END = datetime(2026, 11, 7, 23, 30)    # 11:30pm carriages
@@ -21,8 +25,12 @@ EVENT_END = datetime(2026, 11, 7, 23, 30)    # 11:30pm carriages
 # Host password now lives in Streamlit secrets — see .streamlit/secrets.toml
 # ============================================================
 
-DATA_FILE = os.path.join(os.path.dirname(__file__), "rsvp_data.xlsx")
 DATA_COLUMNS = ["Guest 1", "Additional Guests", "Party Size", "Status", "Notes", "Timestamp"]
+
+SCOPES = [
+    "https://www.googleapis.com/auth/spreadsheets",
+    "https://www.googleapis.com/auth/drive",
+]
 
 st.set_page_config(
     page_title=f"{COUPLE_NAMES} — RSVP",
@@ -359,6 +367,22 @@ st.markdown("""
         background-color: var(--card) !important;
     }
 
+    /* Metrics inside the host dashboard (Total Responses / Total Attending) —
+       force light styling so mobile dark-mode can't turn these white-on-white */
+    div[data-testid="stMetric"] {
+        background-color: var(--card) !important;
+    }
+
+    div[data-testid="stMetric"] label,
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] {
+        color: var(--ink) !important;
+    }
+
+    /* The responses dataframe — force light styling for the same reason */
+    div[data-testid="stDataFrame"] {
+        background-color: #FFFFFF !important;
+    }
+
     .footer-note {
         text-align: center;
         font-family: 'Fraunces', serif;
@@ -401,25 +425,46 @@ SPRIG_SVG = """
 """
 
 
-# --- PERSISTENT STORAGE HELPERS ---
+# --- PERSISTENT STORAGE HELPERS (Google Sheets) ---
+@st.cache_resource
+def get_worksheet():
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"], scopes=SCOPES
+    )
+    client = gspread.authorize(creds)
+    sheet = client.open(GOOGLE_SHEET_NAME).sheet1
+
+    # Make sure the header row exists / matches, so a brand new sheet works too
+    existing_headers = sheet.row_values(1)
+    if existing_headers != DATA_COLUMNS:
+        sheet.update("A1", [DATA_COLUMNS])
+
+    return sheet
+
+
 def load_rsvp_data():
-    if os.path.exists(DATA_FILE):
-        try:
-            df = pd.read_excel(DATA_FILE)
-            for col in DATA_COLUMNS:
-                if col not in df.columns:
-                    df[col] = None
-            df["Party Size"] = pd.to_numeric(df["Party Size"], errors="coerce").fillna(1).astype("Int64")
-            df["Additional Guests"] = df["Additional Guests"].fillna("—")
-            df["Notes"] = df["Notes"].fillna("—")
-            return df[DATA_COLUMNS]
-        except (ValueError, KeyError):
-            return pd.DataFrame(columns=DATA_COLUMNS)
-    return pd.DataFrame(columns=DATA_COLUMNS)
+    sheet = get_worksheet()
+    records = sheet.get_all_records()
+    df = pd.DataFrame(records)
+
+    if df.empty:
+        return pd.DataFrame(columns=DATA_COLUMNS)
+
+    for col in DATA_COLUMNS:
+        if col not in df.columns:
+            df[col] = None
+
+    df["Party Size"] = pd.to_numeric(df["Party Size"], errors="coerce").fillna(1).astype("Int64")
+    df["Additional Guests"] = df["Additional Guests"].replace("", "—").fillna("—")
+    df["Notes"] = df["Notes"].replace("", "—").fillna("—")
+    return df[DATA_COLUMNS]
 
 
 def save_rsvp_data(df):
-    df.to_excel(DATA_FILE, index=False)
+    sheet = get_worksheet()
+    sheet.clear()
+    values = [DATA_COLUMNS] + df[DATA_COLUMNS].astype(str).values.tolist()
+    sheet.update("A1", values)
 
 
 def build_ics():
