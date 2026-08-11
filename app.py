@@ -187,6 +187,33 @@ st.markdown("""
         min-height: 3rem;
     }
 
+    /* Force light styling on the select control regardless of device dark mode */
+    div[data-baseweb="select"] {
+        background-color: #FEFDF8 !important;
+    }
+
+    div[data-baseweb="select"] * {
+        color: var(--ink) !important;
+        background-color: transparent !important;
+        fill: var(--ink) !important;
+    }
+
+    /* The dropdown options list renders as a popover — force it light too */
+    ul[data-baseweb="menu"], div[data-baseweb="popover"] {
+        background-color: #FFFFFF !important;
+    }
+
+    li[data-baseweb="menu-item"], li[role="option"] {
+        background-color: #FFFFFF !important;
+        color: var(--ink) !important;
+    }
+
+    li[data-baseweb="menu-item"]:hover, li[role="option"]:hover,
+    li[aria-selected="true"] {
+        background-color: #F3EEDD !important;
+        color: var(--ink) !important;
+    }
+
     label p, .stRadio label p {
         font-family: 'Work Sans', sans-serif !important;
         font-size: 1rem !important;
