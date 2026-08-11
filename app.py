@@ -434,7 +434,7 @@ st.markdown("""
 
     .corner-photo {
         position: absolute;
-        top: -2.5rem;
+        top: 0;
         left: -1.5rem;
         width: min(46vw, 480px);
         height: min(46vw, 480px);
@@ -455,21 +455,16 @@ st.markdown("""
         .corner-photo {
             width: 68vw;
             height: 68vw;
-            top: -2.5rem;
+            top: 0;
             left: -1rem;
             -webkit-mask-image: radial-gradient(circle at top left, black 0%, black 30%, rgba(0,0,0,0.5) 50%, transparent 74%);
             mask-image: radial-gradient(circle at top left, black 0%, black 30%, rgba(0,0,0,0.5) 50%, transparent 74%);
         }
     }
 
-    @media (min-width: 900px) {
-        .corner-photo { top: -3.5rem; }
-    }
-
-    /* Extra breathing room on larger screens */
-    @media (min-width: 900px) {
-        .block-container { padding-top: 3.5rem !important; }
-    }
+    /* Note: block-container padding-top is intentionally 0 at every
+       breakpoint so the corner photo sits flush against the very top
+       with no gap, on both mobile and desktop. */
 
     /* Tighten up on small phones */
     @media (max-width: 480px) {
