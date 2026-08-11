@@ -286,7 +286,7 @@ with st.form("rsvp_form"):
         g2_last = st.text_input("Last Name ", key="g2_last")
 
     notes = st.text_area(
-        "Dietary requirements or song requests (optional)",
+        "Dietary requirements (optional)",
         height=80
     )
 
