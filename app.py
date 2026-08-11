@@ -542,14 +542,15 @@ if hero_photo_uri:
     st.markdown(
         "<div class='hero-photo-banner' style=\""
         f"background-image: url('{hero_photo_uri}');"
-        "width: 100%; aspect-ratio: 4 / 3; border-radius: 20px; "
+        "width: 100%; aspect-ratio: 4 / 3; border-radius: 28px; "
         "background-size: cover; background-position: center; "
-        "box-shadow: 0 12px 32px rgba(140, 110, 70, 0.14); "
-        "margin-bottom: 1.6rem; display: block;"
+        "box-shadow: 0 8px 22px rgba(140, 110, 70, 0.10); "
+        "-webkit-mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%); "
+        "mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%); "
+        "margin-bottom: 1.4rem; display: block;"
         "\"></div>",
         unsafe_allow_html=True
     )
-    st.caption(f"(debug: photo loaded, {len(hero_photo_uri)} chars)")
 
 # --- HERO ---
 st.markdown("<div class='hero-eyebrow'>You are invited to celebrate the wedding of</div>", unsafe_allow_html=True)
