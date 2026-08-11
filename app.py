@@ -157,10 +157,12 @@ with st.form("rsvp_form"):
         if not g1_first or not g1_last:
             st.error("Please provide at least Guest 1's First Name and Surname.")
         else:
+            has_guest_2 = bool(g2_first and g2_last)
             new_entry = {
                 "Guest 1": f"{g1_first} {g1_last}",
-                "Guest 2": f"{g2_first} {g2_last}" if g2_first and g2_last else "None",
+                "Guest 2": f"{g2_first} {g2_last}" if has_guest_2 else "None",
                 "Status": status,
+                "Headcount": 2 if (status == "Attending" and has_guest_2) else (1 if status == "Attending" else 0),
                 "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
             st.session_state['rsvp_data'].append(new_entry)
@@ -181,13 +183,23 @@ with st.expander("🔐 Host Login"):
         
         if len(st.session_state['rsvp_data']) > 0:
             df = pd.DataFrame(st.session_state['rsvp_data'])
-            st.dataframe(df, use_container_width=True)
             
-            col_m1, col_m2 = st.columns(2)
+            # Display dataframe without internal headcount helper column if preferred, or keep it visible
+            display_df = df.drop(columns=["Headcount"])
+            st.dataframe(display_df, use_container_width=True)
+            
+            # Calculate total individual heads attending
+            total_heads = df['Headcount'].sum()
+            total_forms = len(df)
+            attending_forms = len(df[df['Status'] == 'Attending'])
+            
+            col_m1, col_m2, col_m3 = st.columns(3)
             with col_m1:
-                st.metric(label="Total Responses", value=len(df))
+                st.metric(label="Total Submissions", value=total_forms)
             with col_m2:
-                st.metric(label="Total Attending", value=len(df[df['Status'] == 'Attending']))
+                st.metric(label="Parties Attending", value=attending_forms)
+            with col_m3:
+                st.metric(label="Total Guests Attending", value=total_heads)
         else:
             st.write("No RSVPs submitted yet.")
     elif host_password:
