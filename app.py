@@ -8,6 +8,7 @@ from datetime import datetime
 COUPLE_NAMES = "Josie & Conor"                                   # e.g. "Alex & Jamie"
 WEDDING_DATE = "7th November 2026"                                # e.g. "October 17th, 2026"
 VENUE = "Ansty Golf Centre, Brinklow Rd, Coventry CV7 9JL"        # e.g. "The Orchard House, Worcestershire" (leave blank to hide)
+TIMINGS = "4:00pm start · Last orders 11:00pm · Carriages 11:30pm"  # leave blank to hide
 # Host password now lives in Streamlit secrets — see .streamlit/secrets.toml
 # ============================================================
 
@@ -93,6 +94,13 @@ st.markdown("""
         font-size: clamp(0.9rem, 2.2vw, 1rem);
         color: #8A7F6A;
         margin-top: 0.3rem;
+    }
+
+    .hero-time {
+        text-align: center;
+        font-size: clamp(0.9rem, 2.2vw, 1rem);
+        color: #8A7F6A;
+        margin-top: 0.2rem;
     }
 
     .sprig-divider {
@@ -264,6 +272,8 @@ st.markdown(f"<h1 class='hero-names'>{display_names}</h1>", unsafe_allow_html=Tr
 st.markdown(f"<div class='hero-date'>{WEDDING_DATE}</div>", unsafe_allow_html=True)
 if VENUE:
     st.markdown(f"<div class='hero-venue'>{VENUE.upper()}</div>", unsafe_allow_html=True)
+if TIMINGS:
+    st.markdown(f"<div class='hero-time'>{TIMINGS}</div>", unsafe_allow_html=True)
 st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 
 # --- RSVP FORM ---
@@ -286,7 +296,7 @@ with st.form("rsvp_form"):
         g2_last = st.text_input("Last Name ", key="g2_last")
 
     notes = st.text_area(
-        "Dietary requirements (optional)",
+        "Dietary requirements or song requests (optional)",
         height=80
     )
 
