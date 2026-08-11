@@ -1,16 +1,28 @@
 import streamlit as st
 import pandas as pd
+import os
+import uuid
 from datetime import datetime
+from urllib.parse import quote
 
 # ============================================================
 # CONFIG — edit these lines to personalize the page
 # ============================================================
-COUPLE_NAMES = "Josie & Conor"                                   # e.g. "Alex & Jamie"
-WEDDING_DATE = "7th November 2026"                                # e.g. "October 17th, 2026"
-VENUE = "Ansty Golf Centre, Brinklow Rd, Coventry CV7 9JL"        # e.g. "The Orchard House, Worcestershire" (leave blank to hide)
+COUPLE_NAMES = "Josie & Conor"                                     # e.g. "Alex & Jamie"
+WEDDING_DATE = "7th November 2026"                                  # display text, e.g. "October 17th, 2026"
+VENUE = "Ansty Golf Centre, Brinklow Rd, Coventry CV7 9JL"          # leave blank to hide
 TIMINGS = "4:00pm start · Last orders 11:00pm · Carriages 11:30pm"  # leave blank to hide
+DRESS_CODE = "Smart Casual"                                         # leave blank to hide
+
+# Used to build the "Add to Calendar" file — keep in sync with WEDDING_DATE/TIMINGS above
+EVENT_START = datetime(2026, 11, 7, 16, 0)   # 4:00pm
+EVENT_END = datetime(2026, 11, 7, 23, 30)    # 11:30pm carriages
+
 # Host password now lives in Streamlit secrets — see .streamlit/secrets.toml
 # ============================================================
+
+DATA_FILE = os.path.join(os.path.dirname(__file__), "rsvp_data.xlsx")
+DATA_COLUMNS = ["Guest 1", "Additional Guests", "Party Size", "Status", "Notes", "Timestamp"]
 
 st.set_page_config(
     page_title=f"{COUPLE_NAMES} — RSVP",
@@ -101,6 +113,22 @@ st.markdown("""
         font-size: clamp(0.9rem, 2.2vw, 1rem);
         color: #8A7F6A;
         margin-top: 0.2rem;
+    }
+
+    .hero-dresscode {
+        text-align: center;
+        font-size: clamp(0.9rem, 2.2vw, 1rem);
+        color: #8A7F6A;
+        margin-top: 0.2rem;
+        font-style: italic;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 1.4rem;
+        flex-wrap: wrap;
     }
 
     .sprig-divider {
@@ -201,15 +229,14 @@ st.markdown("""
         font-size: 1.15rem !important;
     }
 
-    .stButton>button, .stFormSubmitButton>button {
+    .stButton>button, .stFormSubmitButton>button, .stDownloadButton>button, .stLinkButton>a {
         border-radius: 30px !important;
         font-family: 'Work Sans', sans-serif !important;
         font-weight: 600 !important;
-        font-size: 1.15rem !important;
+        font-size: 1.05rem !important;
         padding: 0.85rem 1.5rem !important;
         border: 1.5px solid var(--border) !important;
         color: var(--sage) !important;
-        width: 100%;
         transition: all 0.2s ease;
     }
 
@@ -217,6 +244,7 @@ st.markdown("""
         background-color: var(--terracotta) !important;
         border: 1.5px solid var(--terracotta) !important;
         color: #FBF8EE !important;
+        width: 100%;
     }
 
     .stFormSubmitButton>button:hover {
@@ -225,13 +253,25 @@ st.markdown("""
     }
 
     /* Second RSVP button (Decline) reads as secondary/outlined */
-    div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button {
+    div[data-testid="stForm"] div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button {
         background-color: transparent !important;
         border: 1.5px solid var(--border) !important;
         color: var(--sage) !important;
     }
 
-    div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button:hover {
+    div[data-testid="stForm"] div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button:hover {
+        background-color: #F3EEDD !important;
+        border-color: var(--sage) !important;
+    }
+
+    .stDownloadButton>button, .stLinkButton>a {
+        background-color: #FEFDF8 !important;
+        text-decoration: none !important;
+        text-align: center;
+        display: inline-block;
+    }
+
+    .stDownloadButton>button:hover, .stLinkButton>a:hover {
         background-color: #F3EEDD !important;
         border-color: var(--sage) !important;
     }
@@ -277,9 +317,47 @@ SPRIG_SVG = """
 </div>
 """
 
-# --- INITIALIZE SESSION STATE ---
-if 'rsvp_data' not in st.session_state:
-    st.session_state['rsvp_data'] = []
+
+# --- PERSISTENT STORAGE HELPERS ---
+def load_rsvp_data():
+    if os.path.exists(DATA_FILE):
+        try:
+            df = pd.read_excel(DATA_FILE)
+            for col in DATA_COLUMNS:
+                if col not in df.columns:
+                    df[col] = None
+            df["Party Size"] = pd.to_numeric(df["Party Size"], errors="coerce").fillna(1).astype("Int64")
+            df["Additional Guests"] = df["Additional Guests"].fillna("—")
+            df["Notes"] = df["Notes"].fillna("—")
+            return df[DATA_COLUMNS]
+        except (ValueError, KeyError):
+            return pd.DataFrame(columns=DATA_COLUMNS)
+    return pd.DataFrame(columns=DATA_COLUMNS)
+
+
+def save_rsvp_data(df):
+    df.to_excel(DATA_FILE, index=False)
+
+
+def build_ics():
+    dt_fmt = "%Y%m%dT%H%M%S"
+    stamp_fmt = "%Y%m%dT%H%M%SZ"
+    return (
+        "BEGIN:VCALENDAR\r\n"
+        "VERSION:2.0\r\n"
+        "PRODID:-//Wedding RSVP//EN\r\n"
+        "BEGIN:VEVENT\r\n"
+        f"UID:{uuid.uuid4()}\r\n"
+        f"DTSTAMP:{datetime.utcnow().strftime(stamp_fmt)}\r\n"
+        f"DTSTART:{EVENT_START.strftime(dt_fmt)}\r\n"
+        f"DTEND:{EVENT_END.strftime(dt_fmt)}\r\n"
+        f"SUMMARY:{COUPLE_NAMES.replace('&', 'and')} Wedding\r\n"
+        f"LOCATION:{VENUE}\r\n"
+        f"DESCRIPTION:We can't wait to celebrate with you!\r\n"
+        "END:VEVENT\r\n"
+        "END:VCALENDAR\r\n"
+    )
+
 
 # --- HERO ---
 st.markdown("<div class='hero-eyebrow'>You are invited to celebrate the wedding of</div>", unsafe_allow_html=True)
@@ -293,11 +371,34 @@ if VENUE:
     st.markdown(f"<div class='hero-venue'>{VENUE.upper()}</div>", unsafe_allow_html=True)
 if TIMINGS:
     st.markdown(f"<div class='hero-time'>{TIMINGS}</div>", unsafe_allow_html=True)
+if DRESS_CODE:
+    st.markdown(f"<div class='hero-dresscode'>Dress code: {DRESS_CODE}</div>", unsafe_allow_html=True)
+
+# Add to Calendar + Directions
+col_a1, col_a2 = st.columns(2)
+with col_a1:
+    st.download_button(
+        "📅 Add to Calendar",
+        data=build_ics(),
+        file_name="wedding.ics",
+        mime="text/calendar",
+        use_container_width=True,
+    )
+with col_a2:
+    if VENUE:
+        maps_url = f"https://www.google.com/maps/search/?api=1&query={quote(VENUE)}"
+        st.link_button("📍 Get Directions", maps_url, use_container_width=True)
+
 st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 
 # --- RSVP FORM ---
 st.markdown("<div class='section-label'>Please Let Us Know</div>", unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>Fill in your name below and let us know if you can join us.</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='section-sub'>Fill in your name below and let us know if you can join us. "
+    "Already RSVP'd and need to change your answer? Just submit again with the same name "
+    "and it'll update your existing response.</div>",
+    unsafe_allow_html=True
+)
 
 if 'extra_guest_choice' not in st.session_state:
     st.session_state['extra_guest_choice'] = "-None-"
@@ -349,19 +450,35 @@ with st.form("rsvp_form"):
         if not g1_first or not g1_last:
             st.error("Please enter your first and last name above.")
         else:
+            df = load_rsvp_data()
+            full_name = f"{g1_first.strip()} {g1_last.strip()}"
             additional_names = [f"{f} {l}" for f, l in extra_guest_fields if f and l]
-            new_entry = {
-                "Guest 1": f"{g1_first} {g1_last}",
-                "Additional Guests": ", ".join(additional_names) if additional_names else "None",
+
+            entry = {
+                "Guest 1": full_name,
+                "Additional Guests": ", ".join(additional_names) if additional_names else "—",
                 "Party Size": 1 + len(additional_names),
                 "Status": status,
                 "Notes": notes if notes else "—",
                 "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-            st.session_state['rsvp_data'].append(new_entry)
+
+            match_mask = df["Guest 1"].astype(str).str.strip().str.lower() == full_name.strip().lower()
+
+            if match_mask.any():
+                match_index = df[match_mask].index[0]
+                for key, value in entry.items():
+                    df.at[match_index, key] = value
+                save_rsvp_data(df)
+                is_update = True
+            else:
+                df = pd.concat([df, pd.DataFrame([entry])], ignore_index=True)
+                save_rsvp_data(df)
+                is_update = False
 
             if status == "Attending":
-                st.success(f"Thank you, {g1_first} — we can't wait to celebrate with you! 🌸")
+                msg = "updated" if is_update else "recorded"
+                st.success(f"Thank you, {g1_first} — we've {msg} your RSVP. Can't wait to celebrate with you! 🌸")
             else:
                 st.info(f"Thank you for letting us know, {g1_first}. You'll be missed.")
 
@@ -379,17 +496,28 @@ with st.expander("🔐 Host Login"):
         st.success("Access Granted")
         st.markdown("### RSVP Responses Dashboard")
 
-        if len(st.session_state['rsvp_data']) > 0:
-            df = pd.DataFrame(st.session_state['rsvp_data'])
-            st.dataframe(df, use_container_width=True)
+        df = load_rsvp_data()
 
+        if len(df) > 0:
             total_responses = len(df)
-            attending_guest_count = int(df.loc[df['Status'] == 'Attending', 'Party Size'].sum())
+            attending_guest_count = int(pd.to_numeric(df.loc[df['Status'] == 'Attending', 'Party Size'], errors='coerce').sum())
             col_m1, col_m2 = st.columns(2)
             with col_m1:
                 st.metric(label="Total Responses", value=total_responses)
             with col_m2:
                 st.metric(label="Total Attending", value=attending_guest_count)
+
+            search_term = st.text_input("🔍 Search guests by name", key="guest_search")
+            if search_term:
+                search_mask = (
+                    df["Guest 1"].astype(str).str.contains(search_term, case=False, na=False)
+                    | df["Additional Guests"].astype(str).str.contains(search_term, case=False, na=False)
+                )
+                display_df = df[search_mask]
+            else:
+                display_df = df
+
+            st.dataframe(display_df, use_container_width=True)
 
             csv = df.to_csv(index=False).encode('utf-8')
             st.download_button("Download responses as CSV", csv, "rsvp_responses.csv", "text/csv")
@@ -399,29 +527,31 @@ with st.expander("🔐 Host Login"):
 
             entry_labels = [
                 f"{i} — {row['Guest 1']} ({row['Status']})"
-                for i, row in enumerate(st.session_state['rsvp_data'])
+                for i, row in df.iterrows()
             ]
             selected_label = st.selectbox("Select an entry to remove", entry_labels, key="delete_select")
             selected_index = entry_labels.index(selected_label)
+            selected_df_index = df.index[selected_index]
 
             if 'pending_delete' not in st.session_state:
                 st.session_state['pending_delete'] = None
 
             # If a different entry is picked after a pending confirmation, reset it
-            if st.session_state['pending_delete'] is not None and st.session_state['pending_delete'] != selected_index:
+            if st.session_state['pending_delete'] is not None and st.session_state['pending_delete'] != selected_df_index:
                 st.session_state['pending_delete'] = None
 
             if st.session_state['pending_delete'] is None:
                 if st.button("🗑️ Remove Entry", key="delete_request"):
-                    st.session_state['pending_delete'] = selected_index
+                    st.session_state['pending_delete'] = selected_df_index
                     st.rerun()
             else:
-                target = st.session_state['rsvp_data'][st.session_state['pending_delete']]
+                target = df.loc[st.session_state['pending_delete']]
                 st.warning(f"Remove **{target['Guest 1']}**'s RSVP? This can't be undone.")
                 col_c1, col_c2 = st.columns(2)
                 with col_c1:
                     if st.button("✅ Yes, remove it", key="delete_confirm"):
-                        st.session_state['rsvp_data'].pop(st.session_state['pending_delete'])
+                        df = df.drop(index=st.session_state['pending_delete']).reset_index(drop=True)
+                        save_rsvp_data(df)
                         st.session_state['pending_delete'] = None
                         st.success("Entry removed.")
                         st.rerun()
