@@ -536,14 +536,20 @@ def build_ics():
     )
 
 
-# --- CORNER PHOTO ---
+# --- HERO PHOTO ---
 hero_photo_uri = get_base64_image(HERO_IMAGE_PATH)
 if hero_photo_uri:
     st.markdown(
-        f"<div class='corner-photo-wrap'><div class='corner-photo' "
-        f"style=\"background-image: url('{hero_photo_uri}');\"></div></div>",
+        "<div class='hero-photo-banner' style=\""
+        f"background-image: url('{hero_photo_uri}');"
+        "width: 100%; aspect-ratio: 4 / 3; border-radius: 20px; "
+        "background-size: cover; background-position: center; "
+        "box-shadow: 0 12px 32px rgba(140, 110, 70, 0.14); "
+        "margin-bottom: 1.6rem; display: block;"
+        "\"></div>",
         unsafe_allow_html=True
     )
+    st.caption(f"(debug: photo loaded, {len(hero_photo_uri)} chars)")
 
 # --- HERO ---
 st.markdown("<div class='hero-eyebrow'>You are invited to celebrate the wedding of</div>", unsafe_allow_html=True)
