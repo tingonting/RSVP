@@ -286,12 +286,13 @@ with st.expander("🔐 Host Login"):
             st.dataframe(df, use_container_width=True)
 
             total_responses = len(df)
-            attending_count = len(df[df['Status'] == 'Attending'])
+            guest_counts = df['Guest 2'].apply(lambda g: 2 if g and g != "None" else 1)
+            attending_guest_count = int(guest_counts[df['Status'] == 'Attending'].sum())
             col_m1, col_m2 = st.columns(2)
             with col_m1:
                 st.metric(label="Total Responses", value=total_responses)
             with col_m2:
-                st.metric(label="Total Attending", value=attending_count)
+                st.metric(label="Total Attending", value=attending_guest_count)
 
             csv = df.to_csv(index=False).encode('utf-8')
             st.download_button("Download responses as CSV", csv, "rsvp_responses.csv", "text/csv")
