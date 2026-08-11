@@ -178,7 +178,13 @@ st.markdown("""
         box-shadow: 0 0 0 2px #EFE1CC !important;
     }
 
-    .stSelectbox div[data-baseweb="select"] > div {
+    /* Selectbox — anchored on data-testid, same approach that fixed the Host Login bar */
+    div[data-testid="stSelectbox"] {
+        background-color: transparent !important;
+    }
+
+    div[data-testid="stSelectbox"] > div > div,
+    div[data-testid="stSelectbox"] div[data-baseweb="select"] > div {
         border-radius: 6px !important;
         border: 1.5px solid var(--border) !important;
         background-color: #FEFDF8 !important;
@@ -187,12 +193,7 @@ st.markdown("""
         min-height: 3rem;
     }
 
-    /* Force light styling on the select control regardless of device dark mode */
-    div[data-baseweb="select"] {
-        background-color: #FEFDF8 !important;
-    }
-
-    div[data-baseweb="select"] * {
+    div[data-testid="stSelectbox"] * {
         color: var(--ink) !important;
         background-color: transparent !important;
         fill: var(--ink) !important;
@@ -481,10 +482,9 @@ if 'extra_guest_choice' not in st.session_state:
 
 GUEST_COUNT_OPTIONS = {"-None-": 0, "+1": 1, "+2": 2, "+3": 3}
 
-extra_guest_choice = st.radio(
+extra_guest_choice = st.selectbox(
     "RSVP on behalf of the rest of your party — how many additional guests? (up to 3)",
     list(GUEST_COUNT_OPTIONS.keys()),
-    horizontal=True,
     key="extra_guest_choice"
 )
 extra_guest_count = GUEST_COUNT_OPTIONS[extra_guest_choice]
