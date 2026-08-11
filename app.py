@@ -1,6 +1,21 @@
 import streamlit as st
 import pandas as pd
+import os
 from datetime import datetime
+
+# --- FILE CONFIGURATION ---
+DATA_FILE = "rsvp_data.xlsx"
+
+def load_data():
+    if os.path.exists(DATA_FILE):
+        return pd.read_excel(DATA_FILE)
+    else:
+        return pd.DataFrame(columns=["Guest 1", "Guest 2", "Status", "Headcount", "Timestamp"])
+
+def save_data(new_row):
+    df = load_data()
+    df = pd.concat([df, pd.DataFrame([new_row])], ignore_index=True)
+    df.to_excel(DATA_FILE, index=False)
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
@@ -9,198 +24,64 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- ENHANCED WEDDING VIBE STYLING (CSS) ---
+# --- STYLING (CSS) ---
 st.markdown("""
     <style>
-    /* Import Google Fonts for a romantic wedding aesthetic */
-    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Plus+Jakarta+Sans:wght@300;400;500&display=swap');
-
-    /* Global App Styles */
-    .stApp {
-        background-color: #FAF7F5;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        color: #2C2C2C;
-    }
-    
-    /* Typography */
-    h1, h2, h3, h4 {
-        font-family: 'Playfair Display', serif;
-        color: #4A3B32;
-    }
-
-    /* Hero Invitation Banner */
+    .stApp { background-color: #FAF7F5; font-family: 'Plus Jakarta Sans', sans-serif; }
+    h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: #4A3B32; }
     .hero-container {
         background: linear-gradient(135deg, #F4ECE6 0%, #EADCD3 100%);
-        padding: 40px 20px;
-        border-radius: 16px;
-        text-align: center;
-        margin-bottom: 30px;
-        box-shadow: 0 4px 20px rgba(74, 59, 50, 0.05);
-        border: 1px solid #E3D2C5;
+        padding: 40px 20px; border-radius: 16px; text-align: center; margin-bottom: 30px;
     }
-    
-    .hero-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 2.2rem;
-        color: #4A3B32;
-        margin-bottom: 5px;
-        font-weight: 600;
-        line-height: 1.3;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.1rem;
-        color: #8C7365;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        margin-bottom: 10px;
-    }
-
-    /* Form Container Card */
-    div[data-testid="stForm"] {
-        background-color: #FFFFFF;
-        padding: 35px;
-        border-radius: 20px;
-        box-shadow: 0 8px 30px rgba(74, 59, 50, 0.06);
-        border: 1px solid #EFE6E1;
-    }
-
-    /* Text Inputs */
-    .stTextInput input {
-        background-color: #FCFBF9;
-        border: 1px solid #E6DCD5;
-        border-radius: 10px;
-        color: #4A3B32;
-        padding: 10px;
-    }
-    
-    .stTextInput input:focus {
-        border-color: #B89789;
-        box-shadow: 0 0 0 1px #B89789;
-    }
-
-    /* Buttons Styling */
-    .stFormSubmitButton > button {
-        width: 100%;
-        border-radius: 30px;
-        font-weight: 500;
-        padding: 12px 20px;
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        transition: all 0.3s ease;
-    }
-    
-    /* Make Attending button stand out elegantly */
-    .stFormSubmitButton > button:first-child {
-        background-color: #5A6B5C !important;
-        color: white !important;
-        border: none;
-    }
-    
-    .stFormSubmitButton > button:hover {
-        opacity: 0.9;
-        transform: translateY(-2px);
-    }
+    .hero-title { font-size: 2.2rem; color: #4A3B32; font-weight: 600; }
+    div[data-testid="stForm"] { background-color: #FFFFFF; padding: 35px; border-radius: 20px; }
+    .stFormSubmitButton > button:first-child { background-color: #5A6B5C !important; color: white !important; }
     </style>
 """, unsafe_allow_html=True)
 
-# --- INITIALIZE SESSION STATE ---
-if 'rsvp_data' not in st.session_state:
-    st.session_state['rsvp_data'] = []
-
-# --- HERO INVITATION HEADER ---
+# --- HERO HEADER ---
 st.markdown("""
     <div class="hero-container">
-        <p class="hero-subtitle">You Are Invited</p>
-        <h1 class="hero-title">To celebrate the wedding of<br><span style="font-style: italic; font-weight: 400; font-size: 2.4rem; color: #5C4A3F;">Josie & Conor</span></h1>
+        <p>You Are Invited</p>
+        <h1 class="hero-title">To celebrate the wedding of<br>Josie & Conor</h1>
         <hr style="width: 60px; border: none; height: 1px; background-color: #C5B2A5; margin: 15px auto;">
-        <p style="font-size: 1.2rem; color: #6E574B; font-family: 'Playfair Display', serif; font-style: italic;">
-            November 7th, 2026
-        </p>
+        <p style="font-style: italic;">November 7th, 2026</p>
     </div>
 """, unsafe_allow_html=True)
 
-# --- MAIN RSVP FORM ---
+# --- RSVP FORM ---
 with st.form("rsvp_form"):
-    st.markdown("<h3 style='text-align: center; margin-bottom: 20px;'>Kindly Respond</h3>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #736257; margin-bottom: 30px;'>Please let us know if you'll be able to join our celebration.</p>", unsafe_allow_html=True)
-
-    # Guest 1 Section
-    st.markdown("<h4 style='font-size: 1.1rem; color: #5C4A3F;'>✨ Guest 1 (Primary)</h4>", unsafe_allow_html=True)
+    st.markdown("### Kindly Respond")
     col1, col2 = st.columns(2)
-    with col1:
-        g1_first = st.text_input("First Name", key="g1_f")
-    with col2:
-        g1_last = st.text_input("Surname", key="g1_l")
-
-    st.markdown("<div style='margin: 20px 0;'></div>", unsafe_allow_html=True)
-
-    # Guest 2 Section (Optional)
-    st.markdown("<h4 style='font-size: 1.1rem; color: #5C4A3F;'>✨ Guest 2 (Optional / Partner)</h4>", unsafe_allow_html=True)
+    g1_first = st.text_input("First Name (Guest 1)")
+    g1_last = st.text_input("Surname (Guest 1)")
     col3, col4 = st.columns(2)
-    with col3:
-        g2_first = st.text_input("First Name", key="g2_f")
-    with col4:
-        g2_last = st.text_input("Surname", key="g2_l")
-
-    st.markdown("<div style='margin: 30px 0; border-top: 1px solid #EFE6E1;'></div>", unsafe_allow_html=True)
+    g2_first = st.text_input("First Name (Guest 2)")
+    g2_last = st.text_input("Surname (Guest 2)")
     
-    # Action Buttons Layout
     col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        attending_btn = st.form_submit_button("🥂 Joyfully Attending")
-    with col_btn2:
-        not_attending_btn = st.form_submit_button("🕊️ Regretfully Decline")
+    attending_btn = col_btn1.form_submit_button("🥂 Joyfully Attending")
+    not_attending_btn = col_btn2.form_submit_button("🕊️ Regretfully Decline")
 
     if attending_btn or not_attending_btn:
         status = "Attending" if attending_btn else "Not Attending"
-        
         if not g1_first or not g1_last:
-            st.error("Please provide at least Guest 1's First Name and Surname.")
+            st.error("Please provide Guest 1's Name.")
         else:
             has_guest_2 = bool(g2_first and g2_last)
-            new_entry = {
+            row = {
                 "Guest 1": f"{g1_first} {g1_last}",
                 "Guest 2": f"{g2_first} {g2_last}" if has_guest_2 else "None",
                 "Status": status,
                 "Headcount": 2 if (status == "Attending" and has_guest_2) else (1 if status == "Attending" else 0),
                 "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-            st.session_state['rsvp_data'].append(new_entry)
-            
-            if status == "Attending":
-                st.success(f"Thank you, {g1_first}! Your response has been saved. We can't wait to celebrate with you!")
-            else:
-                st.info(f"Thank you for letting us know, {g1_first}. You will certainly be missed!")
+            save_data(row)
+            st.success("Response saved!")
 
-# --- HOST LOGIN SECTION ---
-st.markdown("<div style='margin: 40px 0;'></div>", unsafe_allow_html=True)
+# --- HOST LOGIN ---
 with st.expander("🔐 Host Login"):
-    host_password = st.text_input("Enter Host Password", type="password")
-    
-    if host_password == "wedding2026":
-        st.success("Access Granted")
-        st.markdown("### RSVP Responses Dashboard")
-        
-        if len(st.session_state['rsvp_data']) > 0:
-            df = pd.DataFrame(st.session_state['rsvp_data'])
-            
-            # Display dataframe without internal headcount helper column if preferred, or keep it visible
-            display_df = df.drop(columns=["Headcount"])
-            st.dataframe(display_df, use_container_width=True)
-            
-            # Calculate total individual heads attending
-            total_heads = df['Headcount'].sum()
-            total_forms = len(df)
-            attending_forms = len(df[df['Status'] == 'Attending'])
-            
-            col_m1, col_m2, col_m3 = st.columns(3)
-            with col_m1:
-                st.metric(label="Total Submissions", value=total_forms)
-            with col_m2:
-                st.metric(label="Parties Attending", value=attending_forms)
-            with col_m3:
-                st.metric(label="Total Guests Attending", value=total_heads)
-        else:
-            st.write("No RSVPs submitted yet.")
-    elif host_password:
-        st.error("Incorrect password.")
+    if st.text_input("Enter Password", type="password") == "wedding2026":
+        df = load_data()
+        st.dataframe(df, use_container_width=True)
+        st.metric("Total Guests Attending", df['Headcount'].sum())
