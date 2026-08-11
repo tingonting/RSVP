@@ -432,9 +432,10 @@ if 'extra_guest_choice' not in st.session_state:
 
 GUEST_COUNT_OPTIONS = {"-None-": 0, "+1": 1, "+2": 2, "+3": 3}
 
-extra_guest_choice = st.selectbox(
+extra_guest_choice = st.radio(
     "RSVP on behalf of the rest of your party — how many additional guests? (up to 3)",
     list(GUEST_COUNT_OPTIONS.keys()),
+    horizontal=True,
     key="extra_guest_choice"
 )
 extra_guest_count = GUEST_COUNT_OPTIONS[extra_guest_choice]
@@ -556,7 +557,7 @@ with st.expander("🔐 Host Login"):
                 f"{i} — {row['Guest 1']} ({row['Status']})"
                 for i, row in df.iterrows()
             ]
-            selected_label = st.selectbox("Select an entry to remove", entry_labels, key="delete_select")
+            selected_label = st.radio("Select an entry to remove", entry_labels, key="delete_select")
             selected_index = entry_labels.index(selected_label)
             selected_df_index = df.index[selected_index]
 
