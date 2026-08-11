@@ -17,159 +17,171 @@ st.set_page_config(
     layout="centered"
 )
 
-# --- BLUSH & IVORY STYLING ---
+# --- BLUSH & IVORY STYLING (large text, high contrast, responsive) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Jost:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@400;500;600&display=swap');
 
     :root {
         --ivory: #FBF7F4;
-        --ink: #3A2E2E;
+        --ink: #2B2020;
         --blush: #EFD9D9;
         --rose: #B76E79;
-        --rose-deep: #9C5560;
+        --rose-deep: #8A4650;
         --gold: #C9A66B;
         --sage: #8FA379;
         --card-shadow: rgba(183, 110, 121, 0.14);
     }
 
-    .stApp {
+    html, body, .stApp {
         background-color: var(--ivory);
         color: var(--ink);
         font-family: 'Jost', sans-serif;
+        font-size: 18px;
     }
 
     #MainMenu, footer, header {visibility: hidden;}
 
+    .block-container {
+        max-width: 720px;
+        padding-top: 2.5rem;
+        padding-bottom: 3rem;
+    }
+
     h1, h2, h3 {
         font-family: 'Cormorant Garamond', serif;
         color: var(--ink);
-        letter-spacing: 0.02em;
     }
 
     .hero-eyebrow {
         text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 0.35em;
-        font-size: 0.7rem;
+        letter-spacing: 0.15em;
+        font-size: clamp(0.85rem, 2vw, 1rem);
         color: var(--rose-deep);
         font-weight: 500;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.5rem;
     }
 
     .hero-names {
         text-align: center;
         font-family: 'Cormorant Garamond', serif;
-        font-weight: 500;
-        font-size: 3.1rem;
-        line-height: 1.1;
+        font-weight: 600;
+        font-size: clamp(2.4rem, 8vw, 3.4rem);
+        line-height: 1.15;
         color: var(--ink);
         margin: 0;
     }
 
     .hero-names em {
-        color: var(--rose);
+        color: var(--rose-deep);
         font-style: italic;
     }
 
     .hero-date {
         text-align: center;
         font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
         font-style: italic;
-        font-size: 1.35rem;
+        font-size: clamp(1.3rem, 3.5vw, 1.6rem);
         color: var(--rose-deep);
-        margin-top: 0.3rem;
+        margin-top: 0.4rem;
     }
 
     .hero-venue {
         text-align: center;
-        font-size: 0.85rem;
-        color: #8A7B7B;
-        letter-spacing: 0.08em;
-        margin-top: 0.2rem;
+        font-size: clamp(0.9rem, 2.2vw, 1rem);
+        color: #6E5C5C;
+        margin-top: 0.3rem;
     }
 
     .sprig-divider {
         display: flex;
         justify-content: center;
-        margin: 1.6rem 0;
+        margin: 1.8rem 0;
     }
 
     .section-label {
-        text-transform: uppercase;
-        letter-spacing: 0.28em;
-        font-size: 0.72rem;
+        font-size: clamp(1.3rem, 3.5vw, 1.6rem);
+        font-family: 'Cormorant Garamond', serif;
+        font-weight: 600;
         color: var(--rose-deep);
-        font-weight: 500;
         text-align: center;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.4rem;
     }
 
     .section-sub {
         text-align: center;
-        color: #8A7B7B;
-        font-size: 0.95rem;
-        margin-bottom: 1.6rem;
+        color: #5A4A4A;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        margin-bottom: 1.8rem;
+        line-height: 1.5;
     }
 
     div[data-testid="stForm"] {
         background-color: #FFFFFF;
-        padding: 2.4rem 2.2rem;
-        border-radius: 6px;
+        padding: clamp(1.4rem, 5vw, 2.6rem);
+        border-radius: 10px;
         box-shadow: 0 12px 32px var(--card-shadow);
         border: 1px solid var(--blush);
-        position: relative;
-    }
-
-    div[data-testid="stForm"]::before {
-        content: "";
-        position: absolute;
-        top: 10px; left: 10px; right: 10px; bottom: 10px;
-        border: 1px solid var(--blush);
-        border-radius: 3px;
-        pointer-events: none;
     }
 
     .stTextInput input, .stTextArea textarea {
-        border-radius: 4px !important;
-        border: 1px solid #E4D3D3 !important;
+        border-radius: 6px !important;
+        border: 1.5px solid #D9C2C2 !important;
         background-color: #FEFCFB !important;
         font-family: 'Jost', sans-serif !important;
+        font-size: 1.1rem !important;
+        padding: 0.7rem 0.8rem !important;
+        color: var(--ink) !important;
     }
 
     .stTextInput input:focus, .stTextArea textarea:focus {
         border-color: var(--rose) !important;
-        box-shadow: 0 0 0 1px var(--rose) !important;
+        box-shadow: 0 0 0 2px var(--blush) !important;
     }
 
-    label p {
+    label p, .stRadio label p {
         font-family: 'Jost', sans-serif !important;
-        font-size: 0.8rem !important;
-        letter-spacing: 0.04em;
+        font-size: 1rem !important;
+        font-weight: 500;
         color: var(--ink) !important;
-        text-transform: uppercase;
     }
 
     .guest-tag {
         font-family: 'Cormorant Garamond', serif;
-        font-style: italic;
-        font-size: 1.15rem;
+        font-weight: 600;
+        font-size: 1.4rem;
         color: var(--rose-deep);
-        margin-bottom: 0.4rem;
-        margin-top: 0.6rem;
+        margin-bottom: 0.5rem;
+        margin-top: 0.8rem;
+    }
+
+    div[role="radiogroup"] {
+        gap: 0.6rem;
+    }
+
+    div[role="radiogroup"] label {
+        border: 1.5px solid #D9C2C2;
+        border-radius: 8px;
+        padding: 0.7rem 1rem !important;
+        background-color: #FEFCFB;
+    }
+
+    div[role="radiogroup"] label p {
+        font-size: 1.15rem !important;
     }
 
     .stButton>button, .stFormSubmitButton>button {
         border-radius: 30px !important;
         font-family: 'Jost', sans-serif !important;
-        font-weight: 500 !important;
-        letter-spacing: 0.05em;
-        padding: 0.6rem 1rem !important;
-        border: 1px solid var(--rose) !important;
+        font-weight: 600 !important;
+        font-size: 1.15rem !important;
+        padding: 0.85rem 1.5rem !important;
+        border: 1.5px solid var(--rose) !important;
+        width: 100%;
         transition: all 0.2s ease;
     }
 
-    div[data-testid="stForm"] button[kind="secondaryFormSubmit"]:nth-of-type(1),
     .stFormSubmitButton>button {
         background-color: var(--rose) !important;
         color: #FFFFFF !important;
@@ -184,9 +196,26 @@ st.markdown("""
         text-align: center;
         font-family: 'Cormorant Garamond', serif;
         font-style: italic;
-        color: #A99B9B;
-        font-size: 0.95rem;
-        margin-top: 2.2rem;
+        font-size: 1.15rem;
+        color: #7A6868;
+        margin-top: 2.4rem;
+    }
+
+    /* Extra breathing room on larger screens */
+    @media (min-width: 900px) {
+        .block-container { padding-top: 3.5rem; }
+    }
+
+    /* Tighten up on small phones */
+    @media (max-width: 480px) {
+        html, body, .stApp { font-size: 17px; }
+        div[data-testid="stForm"] { padding: 1.2rem; }
+        div[data-testid="stHorizontalBlock"] {
+            flex-direction: column;
+        }
+        div[data-testid="stHorizontalBlock"] > div {
+            width: 100% !important;
+        }
     }
     </style>
 """, unsafe_allow_html=True)
@@ -222,25 +251,28 @@ if VENUE:
 st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 
 # --- RSVP FORM ---
-st.markdown("<div class='section-label'>Kindly Respond</div>", unsafe_allow_html=True)
-st.markdown("<div class='section-sub'>We would love to celebrate with you — please let us know by the date on your invitation.</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-label'>Please Let Us Know</div>", unsafe_allow_html=True)
+st.markdown("<div class='section-sub'>Fill in your name below and let us know if you can join us.</div>", unsafe_allow_html=True)
 
 with st.form("rsvp_form"):
-    st.markdown("<div class='guest-tag'>Guest One</div>", unsafe_allow_html=True)
+    st.markdown("<div class='guest-tag'>Your Name</div>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
         g1_first = st.text_input("First Name", key="g1_first")
     with col2:
-        g1_last = st.text_input("Surname", key="g1_last")
+        g1_last = st.text_input("Last Name", key="g1_last")
 
-    st.markdown("<div class='guest-tag'>Guest Two · optional</div>", unsafe_allow_html=True)
+    st.markdown("<div class='guest-tag'>Bringing a Guest? (optional)</div>", unsafe_allow_html=True)
     col3, col4 = st.columns(2)
     with col3:
-        g2_first = st.text_input("First Name", key="g2_first")
+        g2_first = st.text_input("First Name ", key="g2_first")
     with col4:
-        g2_last = st.text_input("Surname", key="g2_last")
+        g2_last = st.text_input("Last Name ", key="g2_last")
 
-    notes = st.text_area("Dietary requirements or song requests · optional", height=80)
+    notes = st.text_area(
+        "Dietary requirements or song requests (optional)",
+        height=80
+    )
 
     st.write("")
     col_btn1, col_btn2 = st.columns(2)
@@ -253,7 +285,7 @@ with st.form("rsvp_form"):
         status = "Attending" if attending_btn else "Not Attending"
 
         if not g1_first or not g1_last:
-            st.error("Please provide at least Guest 1's first name and surname.")
+            st.error("Please enter your first and last name above.")
         else:
             new_entry = {
                 "Guest 1": f"{g1_first} {g1_last}",
