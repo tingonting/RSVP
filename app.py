@@ -176,6 +176,16 @@ st.markdown("""
         margin-top: 0.8rem;
     }
 
+    .guest-subtag {
+        font-family: 'Work Sans', sans-serif;
+        font-weight: 600;
+        font-size: 1rem;
+        letter-spacing: 0.04em;
+        color: var(--terracotta);
+        margin-bottom: 0.4rem;
+        margin-top: 0.9rem;
+    }
+
     div[role="radiogroup"] {
         gap: 0.6rem;
     }
@@ -310,11 +320,12 @@ with st.form("rsvp_form"):
     if extra_guest_count > 0:
         st.markdown("<div class='guest-tag'>RSVP on behalf of the rest of your party</div>", unsafe_allow_html=True)
         for i in range(extra_guest_count):
+            st.markdown(f"<div class='guest-subtag'>Guest {i + 2}</div>", unsafe_allow_html=True)
             colA, colB = st.columns(2)
             with colA:
-                gf = st.text_input(f"First Name — Guest {i + 2}", key=f"g{i + 2}_first")
+                gf = st.text_input("First Name", key=f"g{i + 2}_first")
             with colB:
-                gl = st.text_input(f"Last Name — Guest {i + 2}", key=f"g{i + 2}_last")
+                gl = st.text_input("Last Name", key=f"g{i + 2}_last")
             extra_guest_fields.append((gf, gl))
 
     notes = st.text_area(
