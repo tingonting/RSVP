@@ -329,7 +329,7 @@ with st.form("rsvp_form"):
             extra_guest_fields.append((gf, gl))
 
     notes = st.text_area(
-        "Dietary requirements or song requests (optional)",
+        "Dietary Requirements (optional)",
         height=80
     )
 
