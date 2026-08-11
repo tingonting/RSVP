@@ -274,26 +274,28 @@ st.markdown("""
 
     /* Primary action buttons (Joyfully Attending, Yes remove it) — solid terracotta.
        Targets Streamlit's own "kind" attribute rather than position, since column
-       order/testids can change between Streamlit versions. */
-    button[kind="primary"], button[kind="primaryFormSubmit"] {
+       order/testids can change between Streamlit versions. Uses a substring match
+       (*=) since form-submit buttons may render as "primary"/"primaryFormSubmit"
+       or similar variants depending on Streamlit version. */
+    button[kind*="primary"] {
         background-color: var(--terracotta) !important;
         border: 1.5px solid var(--terracotta) !important;
         color: #FBF8EE !important;
     }
 
-    button[kind="primary"]:hover, button[kind="primaryFormSubmit"]:hover {
+    button[kind*="primary"]:hover {
         background-color: var(--terracotta-deep) !important;
         border-color: var(--terracotta-deep) !important;
     }
 
     /* Secondary/outlined buttons (Regretfully Decline, Cancel, etc.) */
-    button[kind="secondary"], button[kind="secondaryFormSubmit"] {
+    button[kind*="secondary"] {
         background-color: transparent !important;
         border: 1.5px solid var(--border) !important;
         color: var(--sage) !important;
     }
 
-    button[kind="secondary"]:hover, button[kind="secondaryFormSubmit"]:hover {
+    button[kind*="secondary"]:hover {
         background-color: #F3EEDD !important;
         border-color: var(--sage) !important;
     }
