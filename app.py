@@ -4,7 +4,7 @@ from datetime import datetime
 
 # --- PAGE CONFIGURATION ---
 st.set_page_config(
-    page_title="Our Wedding RSVP",
+    page_title="Josie & Conor's Wedding RSVP",
     page_icon="💍",
     layout="centered"
 )
@@ -41,10 +41,11 @@ st.markdown("""
     
     .hero-title {
         font-family: 'Playfair Display', serif;
-        font-size: 2.8rem;
+        font-size: 2.2rem;
         color: #4A3B32;
         margin-bottom: 5px;
         font-weight: 600;
+        line-height: 1.3;
     }
     
     .hero-subtitle {
@@ -52,7 +53,7 @@ st.markdown("""
         color: #8C7365;
         letter-spacing: 2px;
         text-transform: uppercase;
-        margin-bottom: 0px;
+        margin-bottom: 10px;
     }
 
     /* Form Container Card */
@@ -109,8 +110,8 @@ if 'rsvp_data' not in st.session_state:
 # --- HERO INVITATION HEADER ---
 st.markdown("""
     <div class="hero-container">
-        <p class="hero-subtitle">The Wedding Of</p>
-        <h1 class="hero-title">You Are Invited</h1>
+        <p class="hero-subtitle">You Are Invited</p>
+        <h1 class="hero-title">To celebrate the wedding of<br><span style="font-style: italic; font-weight: 400; font-size: 2.4rem; color: #5C4A3F;">Josie & Conor</span></h1>
         <hr style="width: 60px; border: none; height: 1px; background-color: #C5B2A5; margin: 15px auto;">
         <p style="font-size: 1.2rem; color: #6E574B; font-family: 'Playfair Display', serif; font-style: italic;">
             November 7th, 2026
