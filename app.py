@@ -264,35 +264,41 @@ st.markdown("""
         padding: 0.85rem 1.5rem !important;
         border: 1.5px solid var(--border) !important;
         color: var(--sage) !important;
+        background-color: #FEFDF8 !important;
         transition: all 0.2s ease;
     }
 
     .stFormSubmitButton>button {
-        background-color: var(--terracotta) !important;
-        border: 1.5px solid var(--terracotta) !important;
-        color: #FBF8EE !important;
         width: 100%;
     }
 
-    .stFormSubmitButton>button:hover {
+    /* Primary action buttons (Joyfully Attending, Yes remove it) — solid terracotta.
+       Targets Streamlit's own "kind" attribute rather than position, since column
+       order/testids can change between Streamlit versions. */
+    button[kind="primary"], button[kind="primaryFormSubmit"] {
+        background-color: var(--terracotta) !important;
+        border: 1.5px solid var(--terracotta) !important;
+        color: #FBF8EE !important;
+    }
+
+    button[kind="primary"]:hover, button[kind="primaryFormSubmit"]:hover {
         background-color: var(--terracotta-deep) !important;
         border-color: var(--terracotta-deep) !important;
     }
 
-    /* Second RSVP button (Decline) reads as secondary/outlined */
-    div[data-testid="stForm"] div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button {
+    /* Secondary/outlined buttons (Regretfully Decline, Cancel, etc.) */
+    button[kind="secondary"], button[kind="secondaryFormSubmit"] {
         background-color: transparent !important;
         border: 1.5px solid var(--border) !important;
         color: var(--sage) !important;
     }
 
-    div[data-testid="stForm"] div[data-testid="column"]:nth-of-type(2) .stFormSubmitButton>button:hover {
+    button[kind="secondary"]:hover, button[kind="secondaryFormSubmit"]:hover {
         background-color: #F3EEDD !important;
         border-color: var(--sage) !important;
     }
 
     .stDownloadButton>button, .stLinkButton>a {
-        background-color: #FEFDF8 !important;
         text-decoration: none !important;
         text-align: center;
         display: inline-block;
@@ -301,6 +307,18 @@ st.markdown("""
     .stDownloadButton>button:hover, .stLinkButton>a:hover {
         background-color: #F3EEDD !important;
         border-color: var(--sage) !important;
+    }
+
+    /* The password show/hide icon button inside the host login field */
+    div[data-testid="stTextInput"] button,
+    div[data-testid="stTextInputRootElement"] button {
+        background-color: transparent !important;
+        border: none !important;
+    }
+
+    div[data-testid="stTextInput"] button svg,
+    div[data-testid="stTextInputRootElement"] button svg {
+        fill: var(--ink) !important;
     }
 
     .footer-note {
@@ -468,9 +486,9 @@ with st.form("rsvp_form"):
     st.write("")
     col_btn1, col_btn2 = st.columns(2)
     with col_btn1:
-        attending_btn = st.form_submit_button("🥂 Joyfully Attending")
+        attending_btn = st.form_submit_button("🥂 Joyfully Attending", type="primary")
     with col_btn2:
-        not_attending_btn = st.form_submit_button("Regretfully Decline")
+        not_attending_btn = st.form_submit_button("Regretfully Decline", type="secondary")
 
     if attending_btn or not_attending_btn:
         status = "Attending" if attending_btn else "Not Attending"
@@ -577,14 +595,14 @@ with st.expander("🔐 Host Login"):
                 st.warning(f"Remove **{target['Guest 1']}**'s RSVP? This can't be undone.")
                 col_c1, col_c2 = st.columns(2)
                 with col_c1:
-                    if st.button("✅ Yes, remove it", key="delete_confirm"):
+                    if st.button("✅ Yes, remove it", key="delete_confirm", type="primary"):
                         df = df.drop(index=st.session_state['pending_delete']).reset_index(drop=True)
                         save_rsvp_data(df)
                         st.session_state['pending_delete'] = None
                         st.success("Entry removed.")
                         st.rerun()
                 with col_c2:
-                    if st.button("Cancel", key="delete_cancel"):
+                    if st.button("Cancel", key="delete_cancel", type="secondary"):
                         st.session_state['pending_delete'] = None
                         st.rerun()
         else:
