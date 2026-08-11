@@ -299,14 +299,17 @@ st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 st.markdown("<div class='section-label'>Please Let Us Know</div>", unsafe_allow_html=True)
 st.markdown("<div class='section-sub'>Fill in your name below and let us know if you can join us.</div>", unsafe_allow_html=True)
 
-if 'extra_guest_count' not in st.session_state:
-    st.session_state['extra_guest_count'] = 0
+if 'extra_guest_choice' not in st.session_state:
+    st.session_state['extra_guest_choice'] = "-None-"
 
-extra_guest_count = st.selectbox(
+GUEST_COUNT_OPTIONS = {"-None-": 0, "+1": 1, "+2": 2, "+3": 3}
+
+extra_guest_choice = st.selectbox(
     "RSVP on behalf of the rest of your party — how many additional guests? (up to 3)",
-    [0, 1, 2, 3],
-    key="extra_guest_count"
+    list(GUEST_COUNT_OPTIONS.keys()),
+    key="extra_guest_choice"
 )
+extra_guest_count = GUEST_COUNT_OPTIONS[extra_guest_choice]
 
 with st.form("rsvp_form"):
     st.markdown("<div class='guest-tag'>Your Name</div>", unsafe_allow_html=True)
