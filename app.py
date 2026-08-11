@@ -78,6 +78,7 @@ st.markdown("""
     }
 
     #MainMenu, footer, header {visibility: hidden;}
+    header {height: 0 !important; min-height: 0 !important;}
 
     .block-container {
         max-width: 720px;
@@ -419,14 +420,14 @@ st.markdown("""
 
     .corner-photo {
         position: absolute;
-        top: -2.5rem;
+        top: -3.5rem;
         left: -1.5rem;
         width: min(46vw, 480px);
         height: min(46vw, 480px);
         background-size: cover;
         background-position: top left;
-        -webkit-mask-image: linear-gradient(135deg, black 0%, black 25%, transparent 72%);
-        mask-image: linear-gradient(135deg, black 0%, black 25%, transparent 72%);
+        -webkit-mask-image: linear-gradient(135deg, black 0%, black 18%, rgba(0,0,0,0.55) 40%, transparent 75%);
+        mask-image: linear-gradient(135deg, black 0%, black 18%, rgba(0,0,0,0.55) 40%, transparent 75%);
         z-index: 0;
         pointer-events: none;
     }
@@ -438,12 +439,12 @@ st.markdown("""
 
     @media (max-width: 480px) {
         .corner-photo {
-            width: 62vw;
-            height: 62vw;
-            top: -1.5rem;
+            width: 68vw;
+            height: 68vw;
+            top: -2.5rem;
             left: -1rem;
-            -webkit-mask-image: linear-gradient(160deg, black 0%, black 20%, transparent 60%);
-            mask-image: linear-gradient(160deg, black 0%, black 20%, transparent 60%);
+            -webkit-mask-image: linear-gradient(160deg, black 0%, black 15%, rgba(0,0,0,0.5) 35%, transparent 65%);
+            mask-image: linear-gradient(160deg, black 0%, black 15%, rgba(0,0,0,0.5) 35%, transparent 65%);
         }
     }
 
@@ -546,7 +547,8 @@ def build_ics():
 hero_photo_uri = get_base64_image(HERO_IMAGE_PATH)
 if hero_photo_uri:
     st.markdown(
-        f"<div class='corner-photo' style=\"background-image: url('{hero_photo_uri}');\"></div>",
+        f"<div class='corner-photo-wrap'><div class='corner-photo' "
+        f"style=\"background-image: url('{hero_photo_uri}');\"></div></div>",
         unsafe_allow_html=True
     )
 
