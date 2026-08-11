@@ -150,6 +150,15 @@ st.markdown("""
         box-shadow: 0 0 0 2px #EFE1CC !important;
     }
 
+    .stSelectbox div[data-baseweb="select"] > div {
+        border-radius: 6px !important;
+        border: 1.5px solid var(--border) !important;
+        background-color: #FEFDF8 !important;
+        font-family: 'Work Sans', sans-serif !important;
+        font-size: 1.1rem !important;
+        min-height: 3rem;
+    }
+
     label p, .stRadio label p {
         font-family: 'Work Sans', sans-serif !important;
         font-size: 1rem !important;
@@ -280,6 +289,15 @@ st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 st.markdown("<div class='section-label'>Please Let Us Know</div>", unsafe_allow_html=True)
 st.markdown("<div class='section-sub'>Fill in your name below and let us know if you can join us.</div>", unsafe_allow_html=True)
 
+if 'extra_guest_count' not in st.session_state:
+    st.session_state['extra_guest_count'] = 0
+
+extra_guest_count = st.selectbox(
+    "RSVP on behalf of the rest of your party — how many additional guests? (up to 3)",
+    [0, 1, 2, 3],
+    key="extra_guest_count"
+)
+
 with st.form("rsvp_form"):
     st.markdown("<div class='guest-tag'>Your Name</div>", unsafe_allow_html=True)
     col1, col2 = st.columns(2)
@@ -288,12 +306,16 @@ with st.form("rsvp_form"):
     with col2:
         g1_last = st.text_input("Last Name", key="g1_last")
 
-    st.markdown("<div class='guest-tag'>Bringing a Guest? (optional)</div>", unsafe_allow_html=True)
-    col3, col4 = st.columns(2)
-    with col3:
-        g2_first = st.text_input("First Name ", key="g2_first")
-    with col4:
-        g2_last = st.text_input("Last Name ", key="g2_last")
+    extra_guest_fields = []
+    if extra_guest_count > 0:
+        st.markdown("<div class='guest-tag'>RSVP on behalf of the rest of your party</div>", unsafe_allow_html=True)
+        for i in range(extra_guest_count):
+            colA, colB = st.columns(2)
+            with colA:
+                gf = st.text_input(f"First Name — Guest {i + 2}", key=f"g{i + 2}_first")
+            with colB:
+                gl = st.text_input(f"Last Name — Guest {i + 2}", key=f"g{i + 2}_last")
+            extra_guest_fields.append((gf, gl))
 
     notes = st.text_area(
         "Dietary requirements or song requests (optional)",
@@ -313,9 +335,11 @@ with st.form("rsvp_form"):
         if not g1_first or not g1_last:
             st.error("Please enter your first and last name above.")
         else:
+            additional_names = [f"{f} {l}" for f, l in extra_guest_fields if f and l]
             new_entry = {
                 "Guest 1": f"{g1_first} {g1_last}",
-                "Guest 2": f"{g2_first} {g2_last}" if g2_first and g2_last else "None",
+                "Additional Guests": ", ".join(additional_names) if additional_names else "None",
+                "Party Size": 1 + len(additional_names),
                 "Status": status,
                 "Notes": notes if notes else "—",
                 "Timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -346,8 +370,7 @@ with st.expander("🔐 Host Login"):
             st.dataframe(df, use_container_width=True)
 
             total_responses = len(df)
-            guest_counts = df['Guest 2'].apply(lambda g: 2 if g and g != "None" else 1)
-            attending_guest_count = int(guest_counts[df['Status'] == 'Attending'].sum())
+            attending_guest_count = int(df.loc[df['Status'] == 'Attending', 'Party Size'].sum())
             col_m1, col_m2 = st.columns(2)
             with col_m1:
                 st.metric(label="Total Responses", value=total_responses)
