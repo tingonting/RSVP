@@ -82,7 +82,7 @@ st.markdown("""
 
     .block-container {
         max-width: 720px;
-        padding-top: 2.5rem;
+        padding-top: 2.5rem !important;
         padding-bottom: 3rem;
     }
 
@@ -408,10 +408,12 @@ st.markdown("""
         margin-top: 2.4rem;
     }
 
-    /* Top-left hero photo that fades diagonally down into the page,
-       toward the RSVP form. Anchored to the content column (not the
-       viewport) so it can't get clipped by Streamlit's own wrapper
-       divs, sits behind all content, and never intercepts taps/clicks. */
+    /* Top-left hero photo that fades outward in every direction from
+       the corner, toward the RSVP form. A radial fade (rather than a
+       diagonal one) avoids leaving a hard edge on the far side of the
+       photo. Anchored to the content column (not the viewport) so it
+       can't get clipped by Streamlit's own wrapper divs, sits behind
+       all content, and never intercepts taps/clicks. */
     .corner-photo-wrap {
         position: relative;
         width: 100%;
@@ -420,14 +422,14 @@ st.markdown("""
 
     .corner-photo {
         position: absolute;
-        top: -3.5rem;
+        top: -2.5rem;
         left: -1.5rem;
         width: min(46vw, 480px);
         height: min(46vw, 480px);
         background-size: cover;
         background-position: top left;
-        -webkit-mask-image: linear-gradient(135deg, black 0%, black 18%, rgba(0,0,0,0.55) 40%, transparent 75%);
-        mask-image: linear-gradient(135deg, black 0%, black 18%, rgba(0,0,0,0.55) 40%, transparent 75%);
+        -webkit-mask-image: radial-gradient(circle at top left, black 0%, black 35%, rgba(0,0,0,0.5) 58%, transparent 82%);
+        mask-image: radial-gradient(circle at top left, black 0%, black 35%, rgba(0,0,0,0.5) 58%, transparent 82%);
         z-index: 0;
         pointer-events: none;
     }
@@ -443,14 +445,18 @@ st.markdown("""
             height: 68vw;
             top: -2.5rem;
             left: -1rem;
-            -webkit-mask-image: linear-gradient(160deg, black 0%, black 15%, rgba(0,0,0,0.5) 35%, transparent 65%);
-            mask-image: linear-gradient(160deg, black 0%, black 15%, rgba(0,0,0,0.5) 35%, transparent 65%);
+            -webkit-mask-image: radial-gradient(circle at top left, black 0%, black 30%, rgba(0,0,0,0.5) 50%, transparent 74%);
+            mask-image: radial-gradient(circle at top left, black 0%, black 30%, rgba(0,0,0,0.5) 50%, transparent 74%);
         }
+    }
+
+    @media (min-width: 900px) {
+        .corner-photo { top: -3.5rem; }
     }
 
     /* Extra breathing room on larger screens */
     @media (min-width: 900px) {
-        .block-container { padding-top: 3.5rem; }
+        .block-container { padding-top: 3.5rem !important; }
     }
 
     /* Tighten up on small phones */
