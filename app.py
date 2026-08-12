@@ -433,6 +433,20 @@ st.markdown("""
         border-color: var(--sage) !important;
     }
 
+    /* Hotels nav button (top action row) — match the solid cream style of
+       Add to Calendar / Get Directions rather than the outlined secondary
+       style used for buttons like Cancel / Regretfully Decline. */
+    .st-key-hotels_nav_btn button {
+        background-color: #FEFDF8 !important;
+        border: 1.5px solid var(--border) !important;
+        color: var(--sage) !important;
+    }
+
+    .st-key-hotels_nav_btn button:hover {
+        background-color: #F3EEDD !important;
+        border-color: var(--sage) !important;
+    }
+
     /* The password show/hide icon button inside the host login field */
     div[data-testid="stTextInput"] button,
     div[data-testid="stTextInputRootElement"] button {
@@ -709,9 +723,10 @@ with col_a2:
         maps_url = f"https://www.google.com/maps/search/?api=1&query={quote(VENUE)}"
         st.link_button("📍 Get Directions", maps_url, use_container_width=True)
 with col_a3:
-    if st.button("🏨 Hotels", use_container_width=True):
-        go_to("hotels")
-        st.rerun()
+    with st.container(key="hotels_nav_btn"):
+        if st.button("🏨 Hotels", use_container_width=True):
+            go_to("hotels")
+            st.rerun()
 
 st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 
