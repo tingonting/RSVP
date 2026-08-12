@@ -18,6 +18,42 @@ DRESS_CODE = "Smart Casual"                                         # leave blan
 
 GOOGLE_SHEET_NAME = "rsvp_data"   # must match the exact name of your Google Sheet
 
+# Nearby hotels for guests staying over — edit/add/remove entries as needed.
+HOTELS = [
+    {
+        "name": "Sparrow Hotel",
+        "address": "Combe Fields Rd, Coventry CV7 9JP",
+        "distance": "1.2 miles",
+        "drive_time": "3 min drive",
+        "website": "https://www.sparrowhotel.co.uk/",
+        "notes": "",
+    },
+    {
+        "name": "DoubleTree by Hilton Coventry",
+        "address": "Paradise Way, Walsgrave on Sowe, Coventry CV2 2ST",
+        "distance": "2.3 miles",
+        "drive_time": "8 min drive",
+        "website": "https://www.hilton.com/en/hotels/cvthndi-doubletree-coventry/",
+        "notes": "",
+    },
+    {
+        "name": "Premier Inn Coventry East",
+        "address": "Gielgud Wy, Coventry CV2 2SZ",
+        "distance": "2.3 miles",
+        "drive_time": "7 min drive",
+        "website": "https://www.premierinn.com/gb/en/hotels/england/west-midlands/coventry/coventry-east-m6jct2.html",
+        "notes": "",
+    },
+    {
+        "name": "Holiday Inn Coventry M6, Jct.2",
+        "address": "Hinckley Rd, Coventry CV2 2HP",
+        "distance": "2.1 miles",
+        "drive_time": "7 min drive",
+        "website": "https://www.ihg.com/holidayinn/hotels/gb/en/coventry/cvthr/hoteldetail",
+        "notes": "",
+    },
+]
+
 # Used to build the "Add to Calendar" file — keep in sync with WEDDING_DATE/TIMINGS above
 EVENT_START = datetime(2026, 11, 7, 16, 0)   # 4:00pm
 EVENT_END = datetime(2026, 11, 7, 23, 30)    # 11:30pm carriages
@@ -197,6 +233,46 @@ st.markdown("""
         border-radius: 18px;
         box-shadow: 0 12px 32px var(--card-shadow);
         border: none;
+    }
+
+    .hotel-card {
+        background-color: var(--card);
+        padding: clamp(1.1rem, 4vw, 1.6rem);
+        border-radius: 16px;
+        box-shadow: 0 8px 20px var(--card-shadow);
+        margin-bottom: 1.1rem;
+    }
+
+    .hotel-name {
+        font-family: 'Fraunces', serif;
+        font-weight: 600;
+        font-style: italic;
+        font-size: 1.35rem;
+        color: var(--ink);
+        margin-bottom: 0.3rem;
+    }
+
+    .hotel-address {
+        color: #6E6252;
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .hotel-meta {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        color: var(--sage);
+        font-weight: 500;
+        font-size: 0.95rem;
+        margin-bottom: 0.6rem;
+    }
+
+    .hotel-notes {
+        color: #8A7F6A;
+        font-size: 0.95rem;
+        font-style: italic;
+        margin-bottom: 0.6rem;
     }
 
     .stTextInput input, .stTextArea textarea {
@@ -421,24 +497,27 @@ st.markdown("""
     }
 
     /* Full-width rounded photo banner sitting above the hero names.
-       Simple, in-flow layout — no cropping tricks, no masking, no
-       absolute positioning — so it can't misbehave across browsers
-       or clip guests out of frame. */
+       Simple, in-flow layout — no cropping tricks, no absolute
+       positioning — so it can't misbehave across browsers or clip
+       guests out of frame. The bottom edge fades gently into the
+       page instead of ending in a hard rectangle. */
     .hero-photo-banner {
         width: 100%;
         aspect-ratio: 4 / 3;
-        border-radius: 20px;
+        border-radius: 28px;
         background-size: cover;
         background-position: center;
-        box-shadow: 0 12px 32px var(--card-shadow);
-        margin-bottom: 1.6rem;
+        box-shadow: 0 8px 22px rgba(140, 110, 70, 0.10);
+        -webkit-mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
+        mask-image: linear-gradient(to bottom, black 0%, black 78%, transparent 100%);
+        margin-bottom: 1.4rem;
     }
 
     @media (max-width: 480px) {
         .hero-photo-banner {
             aspect-ratio: 1 / 1;
-            border-radius: 16px;
-            margin-bottom: 1.2rem;
+            border-radius: 22px;
+            margin-bottom: 1.1rem;
         }
     }
 
@@ -536,6 +615,54 @@ def build_ics():
     )
 
 
+# --- PAGE ROUTING (simple session-state toggle, no separate pages folder) ---
+if "page" not in st.session_state:
+    st.session_state["page"] = "home"
+
+
+def go_to(page_name):
+    st.session_state["page"] = page_name
+
+
+if st.session_state["page"] == "hotels":
+    if st.button("← Back to RSVP"):
+        go_to("home")
+        st.rerun()
+
+    st.markdown("<div class='section-label'>Where to Stay</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='section-sub'>A few nearby options if you're staying over — "
+        "distances and drive times are approximate from the venue.</div>",
+        unsafe_allow_html=True
+    )
+
+    for hotel in HOTELS:
+        st.markdown(f"<div class='hotel-name'>{hotel['name']}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='hotel-address'>{hotel['address']}</div>", unsafe_allow_html=True)
+        meta_bits = []
+        if hotel.get("distance"):
+            meta_bits.append(hotel["distance"])
+        if hotel.get("drive_time"):
+            meta_bits.append(hotel["drive_time"])
+        if meta_bits:
+            st.markdown(f"<div class='hotel-meta'>{' · '.join(meta_bits)}</div>", unsafe_allow_html=True)
+        if hotel.get("notes"):
+            st.markdown(f"<div class='hotel-notes'>{hotel['notes']}</div>", unsafe_allow_html=True)
+
+        hotel_maps_url = f"https://www.google.com/maps/search/?api=1&query={quote(hotel['name'] + ', ' + hotel['address'])}"
+        if hotel.get("website"):
+            hcol1, hcol2 = st.columns(2)
+            with hcol1:
+                st.link_button("📍 Get Directions", hotel_maps_url, use_container_width=True)
+            with hcol2:
+                st.link_button("🌐 Website", hotel["website"], use_container_width=True)
+        else:
+            st.link_button("📍 Get Directions", hotel_maps_url, use_container_width=True)
+        st.write("")
+
+    st.stop()
+
+
 # --- HERO PHOTO ---
 hero_photo_uri = get_base64_image(HERO_IMAGE_PATH)
 if hero_photo_uri:
@@ -567,8 +694,8 @@ if TIMINGS:
 if DRESS_CODE:
     st.markdown(f"<div class='hero-dresscode'>Dress code: {DRESS_CODE}</div>", unsafe_allow_html=True)
 
-# Add to Calendar + Directions
-col_a1, col_a2 = st.columns(2)
+# Add to Calendar + Directions + Hotels
+col_a1, col_a2, col_a3 = st.columns(3)
 with col_a1:
     st.download_button(
         "📅 Add to Calendar",
@@ -581,6 +708,10 @@ with col_a2:
     if VENUE:
         maps_url = f"https://www.google.com/maps/search/?api=1&query={quote(VENUE)}"
         st.link_button("📍 Get Directions", maps_url, use_container_width=True)
+with col_a3:
+    if st.button("🏨 Hotels", use_container_width=True):
+        go_to("hotels")
+        st.rerun()
 
 st.markdown(SPRIG_SVG, unsafe_allow_html=True)
 
