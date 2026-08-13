@@ -748,6 +748,11 @@ st.markdown(
     "and it'll update your existing response.</div>",
     unsafe_allow_html=True
 )
+st.markdown(
+    "<div class='rsvp-deadline'>As this is short notice, we need to confirm numbers with "
+    "the venue/vendors — please respond by 2nd October 2026 at the latest.</div>",
+    unsafe_allow_html=True
+)
 
 if 'extra_guest_choice' not in st.session_state:
     st.session_state['extra_guest_choice'] = "-None-"
