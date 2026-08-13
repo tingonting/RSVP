@@ -227,6 +227,16 @@ st.markdown("""
         line-height: 1.5;
     }
 
+    .rsvp-deadline {
+        text-align: center;
+        color: #B3261E;
+        font-weight: 700;
+        font-size: clamp(1rem, 2.5vw, 1.1rem);
+        margin-top: -0.8rem;
+        margin-bottom: 1.8rem;
+        line-height: 1.5;
+    }
+
     div[data-testid="stForm"] {
         background-color: var(--card);
         padding: clamp(1.4rem, 5vw, 2.6rem);
