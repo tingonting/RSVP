@@ -92,18 +92,18 @@ st.set_page_config(
 # --- SAGE & TERRACOTTA STYLING (large text, high contrast, responsive) ---
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Work+Sans:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Great+Vibes&family=Work+Sans:wght@300;400;500;600&display=swap');
 
     :root {
-        --ivory: #F2EEE0;
-        --card: #FBF8EE;
-        --ink: #423B2E;
-        --border: #DED2B8;
-        --terracotta: #B9622F;
-        --terracotta-deep: #93491F;
-        --sage: #7C8B6F;
-        --sage-light: #9CAF88;
-        --card-shadow: rgba(140, 110, 70, 0.14);
+        --ivory: #FDF1EC;
+        --card: #FFF9F5;
+        --ink: #4A3630;
+        --border: #F3D4C4;
+        --terracotta: #E8674A;
+        --terracotta-deep: #C94F35;
+        --sage: #C99A4A;
+        --sage-light: #E3C27A;
+        --card-shadow: rgba(232, 150, 120, 0.18);
     }
 
     html, body, .stApp {
@@ -704,7 +704,7 @@ if hero_photo_uri:
     )
 
 # --- HERO ---
-st.markdown("<div class='hero-eyebrow'>You're warmly invited to celebrate with</div>", unsafe_allow_html=True)
+st.markdown("<div class='hero-eyebrow'>You're warmly invited to celebrate the marriage of</div>", unsafe_allow_html=True)
 if "&" in COUPLE_NAMES:
     display_names = COUPLE_NAMES.replace("&", "<em>&</em>")
 else:
