@@ -704,7 +704,7 @@ if hero_photo_uri:
     )
 
 # --- HERO ---
-st.markdown("<div class='hero-eyebrow'>You are invited to celebrate the wedding of</div>", unsafe_allow_html=True)
+st.markdown("<div class='hero-eyebrow'>You're warmly invited to celebrate with</div>", unsafe_allow_html=True)
 if "&" in COUPLE_NAMES:
     display_names = COUPLE_NAMES.replace("&", "<em>&</em>")
 else:
@@ -749,8 +749,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 st.markdown(
-    "<div class='rsvp-deadline'>As this is short notice, we need to confirm numbers with "
-    "the venue/vendors — please respond by 2nd October 2026 at the latest.</div>",
+    "<div class='rsvp-deadline'>Please kindly respond by 2nd October 2026 at the latest.</div>",
     unsafe_allow_html=True
 )
 
